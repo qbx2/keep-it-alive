@@ -1,0 +1,13 @@
+[package]
+name = "keep-it-alive"
+version = "0.1.0"
+authors = ["Sunyeop Lee <sunyeop97@gmail.com>"]
+edition = "2021"
+
+[lib]
+name = "keep_it_alive"
+crate-type = ["cdylib"]
+
+[dependencies]
+ctor = "0.1"
+libc = "0.2"
