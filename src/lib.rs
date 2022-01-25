@@ -78,11 +78,21 @@ pub unsafe extern "C" fn connect(sockfd: i32, addr: *const sockaddr, addrlen: so
         let addr: &sockaddr_in = transmute(addr);
 
         if addr.sin_family == AF_INET as u16 {
-            let port = u16::from_be(addr.sin_port);
+            let mut optval: i32 = 0;
+            let ret = getsockopt(
+                sockfd,
+                SOL_SOCKET,
+                SO_TYPE,
+                &mut optval as *mut i32 as *mut c_void,
+                &mut (size_of_val(&optval) as socklen_t) as *mut socklen_t,
+            );
 
-            if port == 20001 {
-                // TODO: check if socket type is SOCK_STREAM
-                set_socket_options(sockfd);
+            if ret == 0 {
+                if optval == SOCK_STREAM {
+                    set_socket_options(sockfd);
+                }
+            } else {
+                eprintln!("Failed to get SO_TYPE on {sockfd}: ret={ret}");
             }
         }
     }
